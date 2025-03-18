@@ -12,11 +12,12 @@ import { InitialPrice } from './containers/InitialPrice';
 import { EnterAmounts } from './containers/EnterAmounts';
 import { SelectPair } from './containers/SelectPair';
 import { SelectRange } from './containers/SelectRange';
-
 import { Currency } from '@uniswap/sdk-core';
 
 import './index.scss';
 import { WMATIC_EXTENDED } from 'constants/v3/addresses';
+import { DepositTypeToggle } from './components/DepositTypeToggle';
+
 import {
   setInitialTokenPrice,
   setInitialUSDPrices,
@@ -150,6 +151,7 @@ export function SupplyLiquidityV3() {
 
   const [priceFormat, setPriceFormat] = useState(PriceFormats.TOKEN);
   const [openSettingsModal, setOpenSettingsModal] = useState(false);
+  const [isZap, setIsZap] = useState(false);
 
   useEffect(() => {
     onFieldAInput('');
@@ -453,7 +455,14 @@ export function SupplyLiquidityV3() {
               priceFormat={priceFormat}
             />
             <Box mt={4} position='relative'>
-              <small className='weight-600'>{t('depositAmounts')}</small>
+              <Box className='flex justify-between items-center'>
+                <small className='weight-600'>{t('depositAmounts')}</small>
+                <DepositTypeToggle
+                  handleSelectDepositType={(result) => {
+                    setIsZap(result === 'zap');
+                  }}
+                />
+              </Box>
               {gammaPair?.withdrawOnly && (
                 <Box className='v3-deposit-disable-banner'>
                   <p>{t('withdrawOnlyVault')}</p>
