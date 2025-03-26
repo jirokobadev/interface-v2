@@ -264,6 +264,7 @@ const AddLiquidity: React.FC<{
 
   const router = useRouterContract();
 
+  console.log('router', router);
   const onAddLiquidity = async () => {
     if (!chainId || !library || !account || !router) return;
 

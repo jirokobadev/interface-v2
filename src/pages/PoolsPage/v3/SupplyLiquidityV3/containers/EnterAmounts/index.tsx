@@ -11,6 +11,9 @@ import {
 import { ApprovalState, useApproveCallback } from 'hooks/useV3ApproveCallback';
 import { useActiveWeb3React } from 'hooks';
 import { useUSDCValue } from 'hooks/v3/useUSDCPrice';
+import { Divider } from '@material-ui/core';
+import { ReactComponent as ChartIcon } from 'assets/images/ChartIcon.svg';
+
 import {
   NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
   NONFUNGIBLE_POSITION_V4_MANAGER_ADDRESSES,
@@ -34,6 +37,8 @@ interface IEnterAmounts {
   currencyB: Currency | undefined;
   mintInfo: IDerivedMintInfo;
   priceFormat: PriceFormats;
+  hideA?: boolean;
+  hideB?: boolean;
 }
 
 export function EnterAmounts({
@@ -41,6 +46,8 @@ export function EnterAmounts({
   currencyB,
   mintInfo,
   priceFormat,
+  hideA,
+  hideB,
 }: IEnterAmounts) {
   const { t } = useTranslation();
   const { chainId } = useActiveWeb3React();
@@ -199,46 +206,92 @@ export function EnterAmounts({
 
   return (
     <>
-      <TokenAmountCard
-        currency={currencyA}
-        otherCurrency={currencyB}
-        value={formattedAmounts[Field.CURRENCY_A]}
-        fiatValue={usdcValues[Field.CURRENCY_A]}
-        handleInput={onFieldAInput}
-        handleHalf={() =>
-          onFieldAInput(halfAmounts[Field.CURRENCY_A]?.toExact() ?? '')
-        }
-        handleMax={() =>
-          onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')
-        }
-        locked={mintInfo.depositADisabled}
-        isMax={!!atMaxAmounts[Field.CURRENCY_A]}
-        error={mintInfo.token0ErrorMessage}
-        priceFormat={priceFormat}
-        isBase={false}
-        isDual={isWithNative}
-      />
-      <Box mt={2}>
-        <TokenAmountCard
-          currency={currencyB}
-          otherCurrency={currencyA}
-          value={formattedAmounts[Field.CURRENCY_B]}
-          fiatValue={usdcValues[Field.CURRENCY_B]}
-          handleInput={onFieldBInput}
-          handleHalf={() =>
-            onFieldBInput(halfAmounts[Field.CURRENCY_B]?.toExact() ?? '')
-          }
-          handleMax={() =>
-            onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? '')
-          }
-          locked={mintInfo.depositBDisabled}
-          isMax={!!atMaxAmounts[Field.CURRENCY_B]}
-          error={mintInfo.token1ErrorMessage}
-          priceFormat={priceFormat}
-          isBase={true}
-          isDual={isWithNative}
-        />
-      </Box>
+      {!hideA && (
+        <Box>
+          <TokenAmountCard
+            currency={currencyA}
+            otherCurrency={currencyB}
+            value={formattedAmounts[Field.CURRENCY_A]}
+            fiatValue={usdcValues[Field.CURRENCY_A]}
+            handleInput={onFieldAInput}
+            handleHalf={() =>
+              onFieldAInput(halfAmounts[Field.CURRENCY_A]?.toExact() ?? '')
+            }
+            handleMax={() =>
+              onFieldAInput(maxAmounts[Field.CURRENCY_A]?.toExact() ?? '')
+            }
+            locked={mintInfo.depositADisabled}
+            isMax={!!atMaxAmounts[Field.CURRENCY_A]}
+            error={mintInfo.token0ErrorMessage}
+            priceFormat={priceFormat}
+            isBase={false}
+            isDual={isWithNative}
+          />
+        </Box>
+      )}
+      {!hideB && (
+        <Box mt={2}>
+          <TokenAmountCard
+            currency={currencyB}
+            otherCurrency={currencyA}
+            value={formattedAmounts[Field.CURRENCY_B]}
+            fiatValue={usdcValues[Field.CURRENCY_B]}
+            handleInput={onFieldBInput}
+            handleHalf={() =>
+              onFieldBInput(halfAmounts[Field.CURRENCY_B]?.toExact() ?? '')
+            }
+            handleMax={() =>
+              onFieldBInput(maxAmounts[Field.CURRENCY_B]?.toExact() ?? '')
+            }
+            locked={mintInfo.depositBDisabled}
+            isMax={!!atMaxAmounts[Field.CURRENCY_B]}
+            error={mintInfo.token1ErrorMessage}
+            priceFormat={priceFormat}
+            isBase={true}
+            isDual={isWithNative}
+          />
+        </Box>
+      )}
+      {(hideA || hideB) && (
+        <>
+          <Box my={2}>
+            <Box className='volTradingFeeArea'>
+              <p>
+                {t('zapTradingDesc')}
+                <a href='https://www.google.com' className='volTradingFeeLink'>
+                  {t('volmeTradingFee')}
+                </a>
+              </p>
+            </Box>
+          </Box>
+          <Box my={2}>
+            <Box className='tradingDetailsArea'>
+              <Box className='flex justify-between items-center mb-0-5'>
+                <Box className='flex justify-between items-center'>
+                  <ChartIcon />
+                  <Box className='ml-1'>
+                    <p>1 WBTC = 98,348.14 USDC</p>
+                  </Box>
+                </Box>
+                <Box>
+                  <p>Trade Summary</p>
+                </Box>
+              </Box>
+              <Divider />
+              <Box className='mt-0-5'>
+                <Box className='flex justify-between items-center'>
+                  <p>You will receive</p>
+                  <p>0.00 POL-WBTC LP</p>
+                </Box>
+                <Box className='flex justify-between items-center'>
+                  <p>Your share of pool</p>
+                  <p>0%</p>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </>
+      )}
       <Box mt={2} className='flex justify-between'>
         {showApprovalA !== undefined && (
           <Box width={showApprovalB === undefined ? '100%' : '49%'}>

@@ -2,21 +2,26 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useCurrency } from 'hooks/v3/Tokens';
 import { useActiveWeb3React, useConnectWallet } from 'hooks';
 import { useHistory, useParams } from 'react-router-dom';
+import { BigNumber } from '@ethersproject/bignumber';
+import { usePool } from 'hooks/v3/usePools';
 import {
   useActivePreset,
   useV3DerivedMintInfo,
   useV3MintActionHandlers,
   useV3MintState,
 } from 'state/mint/v3/hooks';
+import { useV3Positions } from 'hooks/v3/useV3Positions';
+
 import { InitialPrice } from './containers/InitialPrice';
 import { EnterAmounts } from './containers/EnterAmounts';
 import { SelectPair } from './containers/SelectPair';
 import { SelectRange } from './containers/SelectRange';
 import { Currency } from '@uniswap/sdk-core';
-
 import './index.scss';
 import { WMATIC_EXTENDED } from 'constants/v3/addresses';
 import { DepositTypeToggle } from './components/DepositTypeToggle';
+import { CurrencyToggle } from './components/CurrencyToggle';
+import { useRouterContract } from 'hooks/useContract';
 
 import {
   setInitialTokenPrice,
@@ -48,6 +53,7 @@ import { useSingleTokenVault } from 'state/singleToken/hooks';
 import { SingleTokenSupplyLiquidity } from 'pages/PoolsPage/SingleToken/SupplyLiquidity';
 import { getConfig } from 'config/index';
 import { SLIPPAGE_DEFAULT } from 'state/user/reducer';
+import { useV3PositionFromTokenId } from 'hooks/v3/useV3Positions';
 
 const useStyles = makeStyles(() => ({
   formControl: {
@@ -142,6 +148,7 @@ export function SupplyLiquidityV3() {
   const [currencyIdA, setCurrencyIdA] = useState(currencyIdAParam);
   const [currencyIdB, setCurrencyIdB] = useState(currencyIdBParam);
 
+  const [selectedCurrency, setSelectedCurrency] = useState(1);
   const { connectWallet } = useConnectWallet(isSupportedNetwork);
 
   const dispatch = useAppDispatch();
@@ -178,6 +185,36 @@ export function SupplyLiquidityV3() {
     undefined,
   );
 
+  // const router = useRouterContract();
+  // const parsedTokenId = BigNumber.from(
+  //   '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+  // );
+  // const { position: positionDetails } = useV3PositionFromTokenId(
+  //   parsedTokenId,
+  //   true,
+  //   true,
+  // );
+
+  // const { loading: positionLoading, positions } = useV3Positions(
+  //   account,
+  //   false,
+  //   false,
+  //   false,
+  // );
+  // console.log(
+  //   'mintInfo',
+  //   mintInfo,
+  //   router,
+  //   positionDetails,
+  //   parsedTokenId,
+  //   baseCurrency,
+  //   positions,
+  // );
+
+  // console.log('currencyIdA', currencyIdA, currencyIdB, mintInfo.feeAmount);
+  // const [_, pool] = usePool(currencyIdA, currencyIdB, 3000, true, false);
+
+  // console.log('pool', pool);
   const { liquidityRangeType } = useV3MintState();
   const {
     onFieldAInput,
@@ -463,19 +500,55 @@ export function SupplyLiquidityV3() {
                   }}
                 />
               </Box>
-              {gammaPair?.withdrawOnly && (
-                <Box className='v3-deposit-disable-banner'>
-                  <p>{t('withdrawOnlyVault')}</p>
-                </Box>
+              {!isZap ? (
+                <>
+                  {gammaPair?.withdrawOnly && (
+                    <Box className='v3-deposit-disable-banner'>
+                      <p>{t('withdrawOnlyVault')}</p>
+                    </Box>
+                  )}
+                  <Box my={2}>
+                    <EnterAmounts
+                      currencyA={baseCurrency ?? undefined}
+                      currencyB={currencyB ?? undefined}
+                      mintInfo={mintInfo}
+                      priceFormat={priceFormat}
+                    />
+                  </Box>
+                </>
+              ) : (
+                <>
+                  <CurrencyToggle
+                    currencyA={baseCurrency ?? undefined}
+                    currencyB={currencyB ?? undefined}
+                    handleSelectCurrency={(result) => {
+                      setSelectedCurrency(result);
+                    }}
+                  />
+
+                  <Box my={2}>
+                    {selectedCurrency === 1 && (
+                      <EnterAmounts
+                        currencyA={baseCurrency ?? undefined}
+                        currencyB={currencyB ?? undefined}
+                        mintInfo={mintInfo}
+                        priceFormat={priceFormat}
+                        hideB={true}
+                      />
+                    )}
+                    {selectedCurrency === 2 && (
+                      <EnterAmounts
+                        currencyA={baseCurrency ?? undefined}
+                        currencyB={currencyB ?? undefined}
+                        mintInfo={mintInfo}
+                        priceFormat={priceFormat}
+                        hideA={true}
+                      />
+                    )}
+                  </Box>
+                </>
               )}
-              <Box my={2}>
-                <EnterAmounts
-                  currencyA={baseCurrency ?? undefined}
-                  currencyB={currencyB ?? undefined}
-                  mintInfo={mintInfo}
-                  priceFormat={priceFormat}
-                />
-              </Box>
+
               <AddLiquidityButton
                 baseCurrency={baseCurrency ?? undefined}
                 quoteCurrency={quoteCurrency ?? undefined}

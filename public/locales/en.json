@@ -503,6 +503,8 @@
   "minPrice": "Min Price",
   "per": "per",
   "depositAmounts": "Deposit Amounts",
+  "zapTradingDesc": "You are adding liquidity to a `hook enabled pool`. Learn more about.",
+  "volmeTradingFee": "Volume Trading Fee Tiers ->",
   "positionComposedAtThisPrice": "Your position will be 100% Composed of {{ symbol }} at this price",
   "currentPrice": "Current Price",
   "addMoreLiquidity": "Add more liquidity",

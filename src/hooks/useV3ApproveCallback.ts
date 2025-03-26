@@ -101,6 +101,8 @@ export function useApproveCallback(
       return;
     }
 
+    console.log('spender', spender);
+
     const approveAmount =
       isInfiniteApproval || chainId === 1868
         ? MaxUint256.toString()

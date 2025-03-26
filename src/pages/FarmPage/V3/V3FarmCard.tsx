@@ -15,6 +15,7 @@ interface Props {
 }
 
 export const V3FarmCard: React.FC<Props> = ({ farm }) => {
+  console.log('farm', farm);
   const { t } = useTranslation();
   const history = useHistory();
   const parsedQuery = useParsedQueryString();

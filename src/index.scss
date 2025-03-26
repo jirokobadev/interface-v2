@@ -511,6 +511,18 @@ wcm-modal {
   margin-left: 2rem;
 }
 
+.mb-1 {
+  margin-bottom: 1rem;
+}
+
+.mb-0-5 {
+  margin-bottom: 0.5rem;
+}
+
+.mt-0-5 {
+  margin-top: 0.5rem;
+}
+
 .bl-1 {
   border-left: 1px solid #242938;
 }
@@ -612,5 +624,28 @@ wcm-modal {
   padding-left: 16px;
   li {
     margin-bottom: 16px;
+  }
+}
+
+.volTradingFeeArea {
+  padding: 15px;
+  border: 1px solid #448aff;
+  border-style: dashed;
+  border-radius: 12px;
+  p {
+    font-size: 14px;
+  }
+  .volTradingFeeLink {
+    color: #448aff;
+  }
+}
+
+.tradingDetailsArea {
+  border: 1px solid $divider;
+  padding: 15px;
+  border-radius: 12px;
+
+  p {
+    font-size: 14px;
   }
 }

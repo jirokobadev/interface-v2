@@ -35,6 +35,7 @@ const SelectVault: React.FC<SelectVaultProps> = ({ onChoose, currency }) => {
         vault.allowToken1)
     );
   });
+  console.log('selectVault', vaults);
 
   const { selectVault, selectedVault } = useSingleTokenVault();
 
