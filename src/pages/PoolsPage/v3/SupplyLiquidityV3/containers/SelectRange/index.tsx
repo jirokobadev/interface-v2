@@ -421,7 +421,6 @@ export function SelectRange({
     }
     return vaults;
   }, [gammaPairExists, steerVaultExists, unipilotVaultExists]);
-  console.log('enabledVaults', enabledVaults);
 
   useEffect(() => {
     if (!loadingSteerVaults) {

@@ -358,6 +358,30 @@ export const GlobalConst = {
     BINANCEWALLET: 'Binance Web3 Wallet',
     PASSPORTWALLET: 'Passport Wallet',
   },
+  kyberswap: {
+    dex: {
+      steer: {
+        name: 'DEX_STEER',
+        chains: [137],
+      },
+      gamma: {
+        name: 'DEX_GAMMA',
+        chains: [1, 137, 1101],
+      },
+      v3UniSwap: {
+        name: 'DEX_QUICKSWAPV3UNI',
+        chains: [1101],
+      },
+      v3Algebra: {
+        name: 'DEX_QUICKSWAPV3ALGEBRA',
+        chains: [137, 1101],
+      },
+      v2: {
+        name: 'DEX_QUICKSWAPV2',
+        chains: [137],
+      },
+    },
+  },
 };
 
 export const DEFAULT_LIST_OF_LISTS: string[] = [

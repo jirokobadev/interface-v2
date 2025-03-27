@@ -185,37 +185,16 @@ export function SupplyLiquidityV3() {
     undefined,
   );
 
-  // const router = useRouterContract();
-  // const parsedTokenId = BigNumber.from(
-  //   '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
-  // );
-  // const { position: positionDetails } = useV3PositionFromTokenId(
-  //   parsedTokenId,
-  //   true,
-  //   true,
-  // );
-
-  // const { loading: positionLoading, positions } = useV3Positions(
-  //   account,
-  //   false,
-  //   false,
-  //   false,
-  // );
-  // console.log(
-  //   'mintInfo',
-  //   mintInfo,
-  //   router,
-  //   positionDetails,
-  //   parsedTokenId,
-  //   baseCurrency,
-  //   positions,
-  // );
-
-  // console.log('currencyIdA', currencyIdA, currencyIdB, mintInfo.feeAmount);
-  // const [_, pool] = usePool(currencyIdA, currencyIdB, 3000, true, false);
-
-  // console.log('pool', pool);
   const { liquidityRangeType } = useV3MintState();
+
+  useEffect(() => {
+    if (isZap) {
+      if (liquidityRangeType === GlobalConst.v3LiquidityRangeType.GAMMA_RANGE) {
+        console.log('liquidityRangeType', liquidityRangeType);
+      }
+    }
+  }, [isZap, liquidityRangeType]);
+
   const {
     onFieldAInput,
     onFieldBInput,
