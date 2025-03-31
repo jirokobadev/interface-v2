@@ -44,6 +44,7 @@ interface IRangeSelector {
   currencyB: Currency | null | undefined;
   mintInfo: IDerivedMintInfo;
   priceFormat: PriceFormats;
+  onChangeVault?: (pair: any, type: string) => void;
 }
 
 export function SelectRange({
@@ -51,6 +52,7 @@ export function SelectRange({
   currencyB,
   mintInfo,
   priceFormat,
+  onChangeVault,
 }: IRangeSelector) {
   const { t } = useTranslation();
   const [fullRangeWarningShown, setFullRangeWarningShown] = useState(true);
@@ -441,14 +443,17 @@ export function SelectRange({
           onChangeLiquidityRangeType(
             GlobalConst.v3LiquidityRangeType.GAMMA_RANGE,
           );
+          if (onChangeVault) onChangeVault(gammaPair, '1');
         } else if (steerVaultExists) {
           onChangeLiquidityRangeType(
             GlobalConst.v3LiquidityRangeType.STEER_RANGE,
           );
+          if (onChangeVault) onChangeVault(steerVault, '4');
         } else {
           onChangeLiquidityRangeType(
             GlobalConst.v3LiquidityRangeType.UNIPILOT_RANGE,
           );
+          if (onChangeVault) onChangeVault(unipilotVaultsForPair, '2');
         }
       }
     } else {
@@ -780,6 +785,7 @@ export function SelectRange({
                     onChangeLiquidityRangeType(
                       GlobalConst.v3LiquidityRangeType.GAMMA_RANGE,
                     );
+                    if (onChangeVault) onChangeVault(gammaPair, '1');
                   }}
                 >
                   <img src={GammaLogo} alt='Gamma Logo' />
@@ -803,6 +809,8 @@ export function SelectRange({
                     onChangeLiquidityRangeType(
                       GlobalConst.v3LiquidityRangeType.UNIPILOT_RANGE,
                     );
+                    if (onChangeVault)
+                      onChangeVault(unipilotVaultsForPair, '2');
                   }}
                 >
                   <span>
@@ -829,6 +837,7 @@ export function SelectRange({
                     onChangeLiquidityRangeType(
                       GlobalConst.v3LiquidityRangeType.STEER_RANGE,
                     );
+                    if (onChangeVault) onChangeVault(steerVault, '4');
                   }}
                 >
                   <p>Steer</p>

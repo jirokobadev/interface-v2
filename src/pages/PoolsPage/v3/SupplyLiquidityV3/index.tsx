@@ -9,6 +9,7 @@ import {
   useV3DerivedMintInfo,
   useV3MintActionHandlers,
   useV3MintState,
+  useGetUnipilotVaults,
 } from 'state/mint/v3/hooks';
 import { useV3Positions } from 'hooks/v3/useV3Positions';
 
@@ -147,6 +148,7 @@ export function SupplyLiquidityV3() {
 
   const [currencyIdA, setCurrencyIdA] = useState(currencyIdAParam);
   const [currencyIdB, setCurrencyIdB] = useState(currencyIdBParam);
+  const [showZap, setShowZap] = useState(false);
 
   const [selectedCurrency, setSelectedCurrency] = useState(1);
   const { connectWallet } = useConnectWallet(isSupportedNetwork);
@@ -356,6 +358,85 @@ export function SupplyLiquidityV3() {
       ? gammaPairs.find((pair) => pair.type === preset)
       : undefined;
 
+  const unipilotVaults = useGetUnipilotVaults();
+
+  const currencyAAddress =
+    baseCurrency && baseCurrency.wrapped
+      ? baseCurrency.wrapped.address.toLowerCase()
+      : '';
+  const currencyBAddress =
+    currencyB && currencyB.wrapped
+      ? currencyB.wrapped.address.toLowerCase()
+      : '';
+
+  const unipilotVaultsForPair = unipilotVaults.filter((item) => {
+    return (
+      (item.token0 &&
+        item.token1 &&
+        item.token0.toLowerCase() === currencyAAddress.toLowerCase() &&
+        item.token1.toLowerCase() === currencyBAddress.toLowerCase()) ||
+      (item.token0 &&
+        item.token1 &&
+        item.token0.toLowerCase() === currencyBAddress.toLowerCase() &&
+        item.token1.toLowerCase() === currencyAAddress.toLowerCase())
+    );
+  });
+
+  const checkIfZapAvailable = () => {
+    const chainIdToUse = chainId ?? ChainId.MATIC;
+    if (GlobalConst.kyberswap.dex.steer.chains.includes(chainIdToUse)) {
+      setShowZap(true);
+      return true;
+    }
+    setShowZap(false);
+    return false;
+  };
+
+  const getDexId = (type) => {
+    switch (type) {
+      case GlobalConst.v3LiquidityRangeType.GAMMA_RANGE:
+        return GlobalConst.kyberswap.dex.gamma.name;
+      case GlobalConst.v3LiquidityRangeType.UNIPILOT_RANGE:
+        return GlobalConst.kyberswap.dex.v3UniSwap.name;
+      case GlobalConst.v3LiquidityRangeType.STEER_RANGE:
+        return GlobalConst.kyberswap.dex.steer.name;
+    }
+    return '';
+  };
+
+  const onChangeVault = async (pair: any, type: string) => {
+    // console.log('pair', pair);
+    const chainIdToUse = chainId ?? ChainId.MATIC;
+    const chainInfo = CHAIN_INFO[chainIdToUse];
+    const zapAvailable = checkIfZapAvailable();
+
+    if (zapAvailable) {
+      // switch (liquidityRangeType) {
+      //   case 'polygon':
+      //     break;
+      //   case '':
+      //     break;
+      // }
+      const dexId = getDexId(type);
+      console.log('dex', dexId);
+      if (dexId) {
+        const url = `${
+          process.env.REACT_APP_KYBERSWP_API_URL
+        }/${chainInfo.label.toLowerCase()}/api/v1/in/route?dex=${dexId}&pool.id=${
+          pair.address
+        }&tokensIn=${
+          pair.token0.address
+        }&amountsIn=1000000000000000000&position.id=${account}`;
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'X-Client-Id': 'quickswap',
+          },
+        });
+        console.log('url', res);
+      }
+    }
+  };
   const { redirectWithCurrencySingleToken } = usePoolsRedirect();
 
   const handleCurrencySelectSingle = useCallback(
@@ -469,15 +550,18 @@ export function SupplyLiquidityV3() {
               currencyB={quoteCurrency}
               mintInfo={mintInfo}
               priceFormat={priceFormat}
+              onChangeVault={onChangeVault}
             />
             <Box mt={4} position='relative'>
               <Box className='flex justify-between items-center'>
                 <small className='weight-600'>{t('depositAmounts')}</small>
-                <DepositTypeToggle
-                  handleSelectDepositType={(result) => {
-                    setIsZap(result === 'zap');
-                  }}
-                />
+                {showZap && (
+                  <DepositTypeToggle
+                    handleSelectDepositType={(result) => {
+                      setIsZap(result === 'zap');
+                    }}
+                  />
+                )}
               </Box>
               {!isZap ? (
                 <>
