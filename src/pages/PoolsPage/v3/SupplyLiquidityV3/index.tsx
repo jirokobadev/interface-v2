@@ -405,21 +405,13 @@ export function SupplyLiquidityV3() {
   };
 
   const onChangeVault = async (pair: any, type: string) => {
-    // console.log('pair', pair);
     const chainIdToUse = chainId ?? ChainId.MATIC;
     const chainInfo = CHAIN_INFO[chainIdToUse];
     const zapAvailable = checkIfZapAvailable();
 
     if (zapAvailable) {
-      // switch (liquidityRangeType) {
-      //   case 'polygon':
-      //     break;
-      //   case '':
-      //     break;
-      // }
       const dexId = getDexId(type);
-      console.log('dex', dexId);
-      if (dexId) {
+      if (dexId && isZap) {
         const url = `${
           process.env.REACT_APP_KYBERSWP_API_URL
         }/${chainInfo.label.toLowerCase()}/api/v1/in/route?dex=${dexId}&pool.id=${

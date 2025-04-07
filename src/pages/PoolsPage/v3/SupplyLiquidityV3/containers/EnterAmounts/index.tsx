@@ -267,20 +267,14 @@ export function EnterAmounts({
           <Box my={2}>
             <Box className='tradingDetailsArea'>
               <Box className='flex justify-between items-center mb-0-5'>
-                <Box className='flex justify-between items-center'>
-                  <ChartIcon />
-                  <Box className='ml-1'>
-                    <p>1 WBTC = 98,348.14 USDC</p>
-                  </Box>
-                </Box>
                 <Box>
-                  <p>Trade Summary</p>
+                  <p className='text-right'>{t('trandeSummary')}</p>
                 </Box>
               </Box>
               <Divider />
               <Box className='mt-0-5'>
                 <Box className='flex justify-between items-center'>
-                  <p>You will receive</p>
+                  <p>{t('youwillreceive')}</p>
                   <p>0.00 POL-WBTC LP</p>
                 </Box>
                 <Box className='flex justify-between items-center'>
